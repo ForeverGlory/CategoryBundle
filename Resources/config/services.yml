@@ -1,0 +1,4 @@
+services:
+#    glory_category.example:
+#        class: Glory\Bundle\CategoryBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]

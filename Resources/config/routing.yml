@@ -1,0 +1,3 @@
+glory_category_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: GloryCategoryBundle:Default:index }
