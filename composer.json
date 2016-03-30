@@ -1,0 +1,23 @@
+{
+    "name": "foreverglory/category-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony CategoryBundle",
+    "keywords": ["symfony", "bundle", "category"],
+    "homepage": "http://foreverglory.me",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ForeverGlory",
+            "email": "foreverglory@qq.com",
+            "homepage": "http://foreverglory.me"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"Glory\\Bundle\\CategoryBundle\\": ""}
+    },
+    "require": {
+        "symfony/symfony": "~2.3"
+    },
+    "require-dev": {
+    }
+}
