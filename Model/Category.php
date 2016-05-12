@@ -1,11 +1,22 @@
 <?php
 
+/*
+ * This file is part of the current project.
+ * 
+ * (c) ForeverGlory <http://foreverglory.me/>
+ * 
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Glory\Bundle\CategoryBundle\Model;
 
 /**
  * Category
+ * 
+ * @author ForeverGlory <foreverglory@qq.com>
  */
-class Category
+class Category implements CategoryInterface
 {
 
     /**
@@ -38,6 +49,17 @@ class Category
      */
     protected $children;
 
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function setName($name)
     {
         $this->name = $name;
@@ -49,9 +71,9 @@ class Category
         return $this->name;
     }
 
-    public function setParent($parent)
+    public function setParent(CategoryInterface $category)
     {
-        $this->parent = $parent;
+        $this->parent = $category;
         return $this;
     }
 
@@ -82,14 +104,23 @@ class Category
         return $this->weight;
     }
 
-    public function addChild($child)
+    public function addChild(CategoryInterface $category)
     {
-        
+        $this->children[$category->getName()] = $category;
+        return $this;
     }
 
-    public function removeChild($child)
+    public function hasChild($name)
     {
-        
+        return array_key_exists($name, $this->children);
+    }
+
+    public function removeChild($name)
+    {
+        if ($this->hasChild($name)) {
+            unset($this->children[$name]);
+        }
+        return $this;
     }
 
     public function getChildren()
