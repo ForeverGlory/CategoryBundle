@@ -3,7 +3,7 @@
 /*
  * This file is part of the current project.
  * 
- * (c) ForeverGlory <http://foreverglory.me/>
+ * (c) ForeverGlory <https://foreverglory.me/>
  * 
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -27,13 +27,13 @@ interface CategoryInterface
 
     public function getName();
 
+    public function setLabel($label);
+
+    public function getLabel();
+
     public function setParent(CategoryInterface $category);
 
     public function getParent();
-
-    public function setType($type);
-
-    public function getType();
 
     public function setWeight($weight);
 
@@ -46,4 +46,10 @@ interface CategoryInterface
     public function removeChild($name);
 
     public function getChildren();
+    
+    public function isRoot();
+    
+    public function getRoot();
+    
+    public function getLevel();
 }

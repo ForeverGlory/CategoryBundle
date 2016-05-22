@@ -3,7 +3,7 @@
 /*
  * This file is part of the current project.
  * 
- * (c) ForeverGlory <http://foreverglory.me/>
+ * (c) ForeverGlory <https://foreverglory.me/>
  * 
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -35,16 +35,16 @@ class Category extends BaseCategory
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     * @ORM\Column(name="name", type="string")
      */
     protected $name;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="code", type="string", length=64, nullable=false)
+     * @ORM\Column(name="label", type="string", nullable=false)
      */
-    protected $code;
+    protected $label;
 
     /**
      * @var integer
@@ -54,8 +54,18 @@ class Category extends BaseCategory
     protected $weight;
 
     /**
-     * @ORM\OneToMany(targetEntity="Category", mappedBy="id")
+     * Parent
+     *
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="children")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $parent;
+    protected $parent = null;
+
+    /**
+     * Children
+     *
+     * @ORM\OneToMany(targetEntity="Category", mappedBy="parent", cascade={"all"})
+     */
+    protected $children = array();
 
 }
