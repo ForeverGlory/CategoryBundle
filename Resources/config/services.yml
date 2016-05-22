@@ -2,4 +2,8 @@ services:
     glory_category.category_manager:
         class: Glory\Bundle\CategoryBundle\Model\CategoryManager
         arguments: [@service_container]
-
+        
+    glory_category.form.category:
+        class: Glory\Bundle\CategoryBundle\Form\Type\CategoryFormType
+        tags: 
+            - { name: form.type, alias: glory_category_form }
