@@ -7,3 +7,8 @@ services:
         class: Glory\Bundle\CategoryBundle\Form\Type\CategoryFormType
         tags: 
             - { name: form.type, alias: glory_category_form }
+    
+    glory_category.form.category_type:
+        class: Glory\Bundle\CategoryBundle\Form\Type\CategoryType
+        tags: 
+            - { name: form.type, alias: category }
