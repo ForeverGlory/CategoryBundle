@@ -27,6 +27,11 @@ class CategoryType extends AbstractType
         
     }
 
+    public function getParent()
+    {
+        return 'entity';
+    }
+
     public function getName()
     {
         return 'category';
