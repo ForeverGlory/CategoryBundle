@@ -1,3 +1,19 @@
-glory_category_homepage:
-    path:     /hello/{name}
-    defaults: { _controller: GloryCategoryBundle:Default:index }
+glory_category_list:
+    path:     /admin/category
+    defaults: { _controller: GloryCategoryBundle:Admin:list }
+
+glory_category_create:
+    path:     /admin/category/create
+    defaults: { _controller: GloryCategoryBundle:Admin:create }
+
+glory_category_show:
+    path:     /admin/category/{id}
+    defaults: { _controller: GloryCategoryBundle:Admin:show }
+
+glory_category_edit:
+    path:     /admin/category/{id}/edit
+    defaults: { _controller: GloryCategoryBundle:Admin:edit }
+
+glory_category_delete:
+    path:     /admin/category/{id}/delete
+    defaults: { _controller: GloryCategoryBundle:Admin:delete }
