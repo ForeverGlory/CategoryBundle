@@ -12,7 +12,9 @@
 namespace Glory\Bundle\CategoryBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Glory\Bundle\CategoryBundle\Model\CategoryManager;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Description of ContentType
@@ -22,11 +24,38 @@ use Symfony\Component\Form\FormBuilderInterface;
 class CategoryFormType extends AbstractType
 {
 
+    /**
+     * @var CategoryManager 
+     */
+    protected $categoryManager;
+
+    public function __construct(CategoryManager $catgoryManager)
+    {
+        $this->categoryManager = $catgoryManager;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
                 ->add('name')
+                ->add('label')
+                ->add('parent', 'category', array(
+                    'class' => $this->categoryManager->getClass(),
+                    'property' => 'label',
+                    'level_property' => 'level',
+                    'parent_property' => 'parent'
+                ))
         ;
+    }
+
+    /**
+     * Configures the options for this type.
+     *
+     * @param OptionsResolver $resolver The resolver for the options.
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        
     }
 
     public function getName()

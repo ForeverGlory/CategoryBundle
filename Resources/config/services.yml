@@ -5,6 +5,7 @@ services:
         
     glory_category.form.category:
         class: Glory\Bundle\CategoryBundle\Form\Type\CategoryFormType
+        arguments: [@glory_category.category_manager]
         tags: 
             - { name: form.type, alias: glory_category_form }
     
