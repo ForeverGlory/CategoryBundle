@@ -3,7 +3,7 @@
 /*
  * This file is part of the current project.
  * 
- * (c) ForeverGlory <https://foreverglory.me/>
+ * (c) ForeverGlory <http://foreverglory.me/>
  * 
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -49,7 +49,7 @@ class Category implements CategoryInterface
     /**
      * @var integer
      */
-    protected $weight;
+    protected $weight = 0;
 
     /**
      * @var array 
@@ -86,7 +86,7 @@ class Category implements CategoryInterface
 
     public function getLabel()
     {
-        return $this->label;
+        return $this->label? : $this->getName();
     }
 
     public function setWeight($weight)
@@ -151,7 +151,7 @@ class Category implements CategoryInterface
 
     public function getLevel()
     {
-        return $this->isRoot() ? 0 : $this->parent()->getLevel() + 1;
+        return $this->isRoot() ? 1 : $this->getParent()->getLevel() + 1;
     }
 
 }

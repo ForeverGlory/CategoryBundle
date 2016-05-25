@@ -3,7 +3,7 @@
 /*
  * This file is part of the current project.
  * 
- * (c) ForeverGlory <https://foreverglory.me/>
+ * (c) ForeverGlory <http://foreverglory.me/>
  * 
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -42,16 +42,16 @@ class Category extends BaseCategory
     /**
      * @var string
      *
-     * @ORM\Column(name="label", type="string", nullable=false)
+     * @ORM\Column(name="label", type="string", nullable=true)
      */
     protected $label;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="weight", type="integer", nullable=false)
+     * @ORM\Column(name="weight", type="integer")
      */
-    protected $weight;
+    protected $weight = 0;
 
     /**
      * Parent
