@@ -27,10 +27,6 @@ interface CategoryInterface
 
     public function getName();
 
-    public function setLabel($label);
-
-    public function getLabel();
-
     public function setParent(CategoryInterface $category);
 
     public function getParent();

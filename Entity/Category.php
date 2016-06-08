@@ -42,13 +42,6 @@ class Category extends BaseCategory
     protected $name;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="label", type="string", nullable=true)
-     */
-    protected $label;
-
-    /**
      * @var integer
      *
      * @ORM\Column(name="weight", type="integer")

@@ -37,11 +37,6 @@ class Category implements CategoryInterface
     protected $name;
 
     /**
-     * @var string 
-     */
-    protected $label;
-
-    /**
      * @var string
      */
     protected $parent;
@@ -76,17 +71,6 @@ class Category implements CategoryInterface
     public function getName()
     {
         return $this->name;
-    }
-
-    public function setLabel($label)
-    {
-        $this->label = $label;
-        return $this;
-    }
-
-    public function getLabel()
-    {
-        return $this->label? : $this->getName();
     }
 
     public function setWeight($weight)
