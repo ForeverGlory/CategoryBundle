@@ -34,7 +34,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('category_class')->isRequired()->example('AppBundle\Entity\Category')->end()
+                ->scalarNode('category_class')->defaultValue('Glory\\Bundle\\CategoryBundle\\Entity\\Category')->example('AppBundle\\Entity\\Category')->end()
             ->end();
 
         return $treeBuilder;
