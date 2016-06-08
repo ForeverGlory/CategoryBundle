@@ -16,7 +16,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Category Entity
- *
+ * 
+ * @ORM\Entity
+ * @ORM\Table("category")
  * @ORM\MappedSuperclass
  * @author ForeverGlory <foreverglory@qq.com>
  */
