@@ -8,6 +8,11 @@ services:
         arguments: [@glory_category.category_manager]
         tags: 
             - { name: form.type, alias: glory_category_form }
+    glory_category.form.category_type:
+        class: Glory\Bundle\CategoryBundle\Form\Type\CategoryTypeFormType
+        arguments: [@glory_category.category_manager]
+        tags: 
+            - { name: form.type, alias: glory_category_type_form }
     
     glory_category.form.category_type:
         class: Glory\Bundle\CategoryBundle\Form\Type\CategoryType
