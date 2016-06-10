@@ -1,6 +1,6 @@
-glory_category_list:
+glory_category:
     path:     /admin/category
-    defaults: { _controller: GloryCategoryBundle:Admin:list }
+    defaults: { _controller: GloryCategoryBundle:Admin:index }
 
 glory_category_create:
     path:     /admin/category/create
@@ -9,6 +9,10 @@ glory_category_create:
 glory_category_show:
     path:     /admin/category/{id}
     defaults: { _controller: GloryCategoryBundle:Admin:show }
+
+glory_category_add:
+    path:     /admin/category/{id}/add
+    defaults: { _controller: GloryCategoryBundle:Admin:add }
 
 glory_category_edit:
     path:     /admin/category/{id}/edit
