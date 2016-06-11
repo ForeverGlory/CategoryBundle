@@ -19,9 +19,11 @@
                     <tr>
                         <td>{{type.name}}</td>
                         <td>
-                            <a href="{{path('glory_category_add',{id:type.id})}}" class="btn btn-default">添加</a>
+                            <a href="{{path('glory_category_show',{id:type.id})}}" class="btn btn-default">管理</a>
                             <a href="{{path('glory_category_edit',{id:type.id})}}" class="btn btn-default">编辑</a>
-                            <a href="{{path('glory_category_delete',{id:type.id})}}" class="btn btn-default">删除</a>
+                            {#{% if not type.haschildren %}#}
+                                <a href="{{path('glory_category_delete',{id:type.id})}}" class="btn btn-default">删除</a>
+                            {#{% endif %}#}
                         </td>
                     </tr>
                 {% endfor %}

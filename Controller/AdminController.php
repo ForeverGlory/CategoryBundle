@@ -32,7 +32,7 @@ class AdminController extends Controller
     {
         $manager = $this->get('glory_category.category_manager');
         $category = $manager->createCategory();
-        $form = $this->createForm('glory_category_type_form', $category);
+        $form = $this->createForm('glory_category_form', $category);
         $form->handleRequest($request);
         if ($form->isValid()) {
             $manager->updateCategory($category);
@@ -43,19 +43,61 @@ class AdminController extends Controller
         ));
     }
 
-    public function showAction(Request $request)
+    public function showAction(Request $request, $id)
     {
-        
+        $category = $this->getCategoryOrThrow($id);
+        return $this->render('GloryCategoryBundle:Admin:show.html.twig', ['category' => $category]);
     }
 
     public function editAction(Request $request, $id)
     {
-        
+        $manager = $this->get('glory_category.category_manager');
+        $category = $this->getCategoryOrThrow($id);
+
+        $form = $this->createForm('glory_category_form', $category);
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $manager->updateCategory($category);
+            if ($category->isRoot()) {
+                return $this->redirectToRoute('glory_category');
+            }
+            return $this->redirectToRoute('glory_category_show', ['id' => $category->getRoot()->getId()]);
+        }
+        return $this->render('GloryCategoryBundle:Admin:edit.html.twig', [
+                    'form' => $form->createView(),
+                    'category' => $category
+        ]);
     }
 
-    public function deleteAction(Request $request)
+    public function deleteAction(Request $request, $id)
     {
-        
+        $manager = $this->get('glory_category.category_manager');
+        $category = $this->getCategoryOrThrow($id);
+
+        if ($category->isRoot()) {
+            $url = $this->generateUrl('glory_category');
+        } else {
+            $url = $this->generateUrl('glory_category_show', ['id' => $category->getRoot()->getId()]);
+        }
+        if ($category->hasChildren()) {
+            $message = sprintf('Category %s has children, You need to delete the subtypes.', $category->getName());
+            $this->addFlash('warning', $message);
+        } else {
+            $message = sprintf('Category %s deleted.', $category->getName());
+            $manager->deleteCategory($category);
+            $this->addFlash('success', $message);
+        }
+        return $this->redirect($url);
+    }
+
+    protected function getCategoryOrThrow($id)
+    {
+        $manager = $this->get('glory_category.category_manager');
+        $category = $manager->findCategory($id);
+        if (!$category) {
+            throw $this->createNotFoundException('Category is not exist.');
+        }
+        return $category;
     }
 
 }

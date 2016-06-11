@@ -3,7 +3,7 @@
 {% block content %}
     <div class="box">
         <div class="box-body">
-            <form action="{{path('glory_category_create')}}" method="post">
+            <form action="{{path('glory_category_edit',{id:category.id})}}" method="post">
                 {{form_widget(form)}}
             </form>
         </div>
