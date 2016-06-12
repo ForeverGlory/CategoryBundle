@@ -60,6 +60,7 @@ class Category extends BaseCategory
      * Children
      *
      * @ORM\OneToMany(targetEntity="Category", mappedBy="parent", cascade={"all"})
+     * @ORM\OrderBy({"weight" = "asc"})
      */
     protected $children = array();
 
