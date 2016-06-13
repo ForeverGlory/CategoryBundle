@@ -5,12 +5,148 @@
 {% endblock %}
 {% block javascripts %}
     <script type="text/javascript" src="{{asset("assets/components/jstree/dist/jstree.min.js")}}"></script>
+    <script type="text/javascript">
+        jQuery(function ($) {
+            $('#category-tree').jstree({
+                'core': {
+                    "check_callback": function (operation, node, parent, position, more) {
+                        if (operation === "copy_node" || operation === "move_node" || operation === "delete_node") {
+                            if (parent.id === "#") {
+                                return false; // prevent moving a child above or below the root
+                            }
+                        }
+                        return true;
+                    },
+                    'force_text': true,
+                    "multiple": false
+                },
+                'contextmenu': {
+                    'items': function (node) {
+                        var items = {
+                            "add": {
+                                "separator_before": false,
+                                "separator_after": true,
+                                "_disabled": false, //(this.check("create_node", data.reference, {}, "last")),
+                                "label": "添加",
+                                "icon": false, // "fa fa-file",
+                                "action": function (data) {
+                                    var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+                                    inst.create_node(obj, {}, "last", function (new_node) {
+                                        setTimeout(function () {
+                                            inst.edit(new_node);
+                                        }, 0);
+                                    });
+                                }
+                            },
+                            "edit": {
+                                "separator_before": false,
+                                "separator_after": false,
+                                "_disabled": false, //(this.check("rename_node", data.reference, this.get_parent(data.reference), "")),
+                                "label": "编辑",
+                                "action": function (data) {
+                                    var inst = $.jstree.reference(data.reference), obj = inst.get_node(data.reference);
+                                    inst.edit(obj);
+                                }
+                            },
+                            "delete": {
+                                "separator_before": false,
+                                "icon": false,
+                                "separator_after": false,
+                                "_disabled": false, //(this.check("delete_node", data.reference, this.get_parent(data.reference), "")),
+                                "label": "删除",
+                                "action": function (data) {
+                                    var inst = $.jstree.reference(data.reference),
+                                            obj = inst.get_node(data.reference);
+                                    if (inst.is_selected(obj)) {
+                                        inst.delete_node(inst.get_selected());
+                                    } else {
+                                        inst.delete_node(obj);
+                                    }
+                                }
+                            }
+                        };
+                        return items;
+                        if (this.get_type(node) === "file") {
+                            delete items.create;
+                        }
+                        return items;
+                    }
+                },
+                'unique': {
+                    'duplicate': function (name, counter) {
+                        return name + ' ' + counter;
+                    }
+                },
+                "plugins": [
+                    "contextmenu", "dnd", "state", "types", "wholerow"
+                ]
+            }).on("changed.jstree", function (e, data) {
+                console.log("The selected nodes are:");
+                console.log(data.selected);
+            }).on('create_node.jstree', function (e, data) {
+                $.post("{{path("glory_category_ajax",{action:"add"})}}", {
+                    name: data.node.text,
+                    parent_id: data.node.parent,
+                    weight: data.position
+                }).done(function (json) {
+                    data.instance.set_id(data.node, json.id);
+                }).fail(function () {
+                    data.instance.refresh();
+                });
+            }).on('rename_node.jstree', function (e, data) {
+                if (data.text != data.old) {
+                    $.post("{{path("glory_category_ajax",{action:"rename"})}}", {
+                        id: data.node.id,
+                        name: data.node.text
+                    }).fail(function () {
+                        data.instance.refresh();
+                    });
+                }
+            }).on('move_node.jstree', function (e, data) {
+                $.post("{{path("glory_category_ajax",{action:"move"})}}", {
+                    id: data.node.id,
+                    parent_id: data.node.parent,
+                    weight: data.position
+                }).fail(function () {
+                    data.instance.refresh();
+                });
+            }).on('delete_node.jstree', function (e, data) {
+                $.post("{{path("glory_category_ajax",{action:"delete"})}}", {
+                    id: data.node.id
+                }).fail(function () {
+                    data.instance.refresh();
+                });
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
     <div class="box">
-        <div class="box-body">
-
+        <div class="box-body" id="category-list">
+            <div id="category-tree">
+                <ul>
+                    <li id="{{category.id}}">
+                        <span>{{category.name}}</span>
+                        {% set item = category %}
+                        {{ block('list') }}
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
+{% endblock %}
+
+{% block list %}
+    <ul>
+        {% set currentItem = item %}
+        {% for item in currentItem.children %}
+            <li id="{{item.id}}">
+                <span>{{item.name}}</span>
+                {% if item.haschildren %}
+                    {{ block('list') }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

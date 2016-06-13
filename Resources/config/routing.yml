@@ -6,18 +6,18 @@ glory_category_create:
     path:     /admin/category/create
     defaults: { _controller: GloryCategoryBundle:Admin:create }
 
-glory_category_show:
-    path:     /admin/category/{id}
-    defaults: { _controller: GloryCategoryBundle:Admin:show }
-
-glory_category_add:
-    path:     /admin/category/{id}/add
-    defaults: { _controller: GloryCategoryBundle:Admin:add }
-
 glory_category_edit:
-    path:     /admin/category/{id}/edit
+    path:     /admin/category/edit
     defaults: { _controller: GloryCategoryBundle:Admin:edit }
 
 glory_category_delete:
-    path:     /admin/category/{id}/delete
+    path:     /admin/category/delete
     defaults: { _controller: GloryCategoryBundle:Admin:delete }
+
+glory_category_ajax:
+    path:     /admin/category/ajax
+    defaults: { _controller: GloryCategoryBundle:Admin:ajax }
+
+glory_category_show:
+    path:     /admin/category/{id}
+    defaults: { _controller: GloryCategoryBundle:Admin:show }

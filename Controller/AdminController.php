@@ -13,6 +13,10 @@ namespace Glory\Bundle\CategoryBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Glory\Bundle\CategoryBundle\EventListener\CategoryWeightListener;
+use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+
 
 /**
  * Description of AdminController
@@ -49,10 +53,19 @@ class AdminController extends Controller
         return $this->render('GloryCategoryBundle:Admin:show.html.twig', ['category' => $category]);
     }
 
-    public function editAction(Request $request, $id)
+    public function editAction(Request $request)
     {
         $manager = $this->get('glory_category.category_manager');
-        $category = $this->getCategoryOrThrow($id);
+
+        if ($id = $request->get('id', null)) {
+            $category = $this->getCategoryOrThrow($id);
+        } else {
+            $category = $manager->createCategory();
+        }
+        if ($parentId = $request->get('parent_id')) {
+            $parent = $this->getCategoryOrThrow($parentId);
+            $category->setParent($parent);
+        }
 
         $form = $this->createForm('glory_category_form', $category);
         $form->handleRequest($request);
@@ -69,10 +82,10 @@ class AdminController extends Controller
         ]);
     }
 
-    public function deleteAction(Request $request, $id)
+    public function deleteAction(Request $request)
     {
         $manager = $this->get('glory_category.category_manager');
-        $category = $this->getCategoryOrThrow($id);
+        $category = $this->getCategoryOrThrow($request->get('id'));
 
         if ($category->isRoot()) {
             $url = $this->generateUrl('glory_category');
@@ -88,6 +101,55 @@ class AdminController extends Controller
             $this->addFlash('success', $message);
         }
         return $this->redirect($url);
+    }
+
+    public function ajaxAction(Request $request)
+    {
+        $data = [];
+        $manager = $this->get('glory_category.category_manager');
+        switch ($request->get('action')) {
+            case 'add':
+                $parentId = $request->request->get('parent_id');
+                $name = $request->request->get('name');
+                $weight = $request->request->get('weight', 0);
+                $category = $manager->createCategory();
+
+                $parent = $this->getCategoryOrThrow($parentId);
+                $category->setName($name);
+                $category->setParent($parent);
+                $category->setWeight($weight);
+
+                $manager->updateCategory($category);
+                $data = ['id' => $category->getId()];
+                break;
+            case 'rename':
+                $category = $this->getCategoryOrThrow($request->get('id'));
+                $category->setName($request->request->get('name'));
+                $manager->updateCategory($category);
+                break;
+            case 'move':
+                $category = $this->getCategoryOrThrow($request->get('id'));
+                $preCategory = clone $category;
+                $parentId = $request->request->get('parent_id');
+                if ($parentId != $category->getParent()->getId()) {
+                    $parent = $this->getCategoryOrThrow($parentId);
+                    $category->setParent($parent);
+                }
+                $weight = $request->request->get('weight');
+                $category->setWeight($weight);
+                $manager->updateCategory($category);
+                $listener = new CategoryWeightListener();
+                $listener->setPreCategory($preCategory);
+                $args = new LifecycleEventArgs($category,  $this->getDoctrine()->getManager());
+                $listener->postUpdate($args);
+                break;
+            case 'delete':
+                $this->deleteAction($request);
+                break;
+            default:
+                break;
+        }
+        return new JsonResponse($data);
     }
 
     protected function getCategoryOrThrow($id)
