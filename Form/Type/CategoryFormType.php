@@ -15,6 +15,7 @@ use Symfony\Component\Form\AbstractType;
 use Glory\Bundle\CategoryBundle\Model\CategoryManager;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 /**
  * Description of ContentType
@@ -36,16 +37,22 @@ class CategoryFormType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-                ->add('name')
-                ->add('label')
-                ->add('parent', 'category', array(
-                    'class' => $this->categoryManager->getClass(),
-                    'property' => 'label',
-                    'level_property' => 'level',
-                    'parent_property' => 'parent'
-                ))
-        ;
+        if ($options['data']->isRoot()) {
+            $builder
+                    ->add('name')
+            ;
+        } else {
+            $builder
+                    ->add('name')
+                    ->add('parent', 'category', array(
+                        'class' => $this->categoryManager->getClass(),
+                        'property' => 'label',
+                        'level_property' => 'level',
+                        'parent_property' => 'parent'
+                    ))
+            ;
+        }
+        $builder->add('save', SubmitType::class);
     }
 
     /**
