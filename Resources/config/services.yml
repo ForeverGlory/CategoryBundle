@@ -18,3 +18,8 @@ services:
         class: Glory\Bundle\CategoryBundle\Form\Type\CategoryType
         tags: 
             - { name: form.type, alias: category }
+
+    glory_category.event.weight_listener:
+        class: Glory\Bundle\CategoryBundle\EventListener\CategoryWeightListener
+        tags:
+            -  { name: doctrine.event_subscriber }
