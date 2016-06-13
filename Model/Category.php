@@ -37,14 +37,14 @@ class Category implements CategoryInterface
     protected $name;
 
     /**
-     * @var string
-     */
-    protected $parent;
-
-    /**
      * @var integer
      */
     protected $weight = 0;
+
+    /**
+     * @var string
+     */
+    protected $parent;
 
     /**
      * @var array 
@@ -114,6 +114,11 @@ class Category implements CategoryInterface
         return $this;
     }
 
+    public function hasChildren()
+    {
+        return count($this->getChildren()) ? true : false;
+    }
+
     public function getChildren()
     {
         return $this->children;
@@ -135,7 +140,7 @@ class Category implements CategoryInterface
 
     public function getLevel()
     {
-        return $this->isRoot() ? 1 : $this->getParent()->getLevel() + 1;
+        return $this->isRoot() ? 0 : $this->getParent()->getLevel() + 1;
     }
 
 }

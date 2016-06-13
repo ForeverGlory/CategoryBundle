@@ -29,6 +29,9 @@ interface CategoryInterface
 
     public function setParent(CategoryInterface $category);
 
+    /**
+     * @return CategoryInterface
+     */
     public function getParent();
 
     public function setWeight($weight);
@@ -40,12 +43,17 @@ interface CategoryInterface
     public function hasChild($name);
 
     public function removeChild($name);
+    
+    public function hasChildren();
 
     public function getChildren();
-    
+
     public function isRoot();
-    
+
+    /**
+     * @return CategoryInterface
+     */
     public function getRoot();
-    
+
     public function getLevel();
 }
