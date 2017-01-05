@@ -13,7 +13,10 @@ namespace Glory\Bundle\CategoryBundle\EventListener;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\Event\PreFlushEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Glory\Bundle\CategoryBundle\Model\CategoryInterface;
 
 /**
@@ -24,6 +27,8 @@ use Glory\Bundle\CategoryBundle\Model\CategoryInterface;
 class CategoryWeightListener implements EventSubscriber
 {
 
+    private $preCategory = [];
+
     public function __construct()
     {
         
@@ -31,65 +36,77 @@ class CategoryWeightListener implements EventSubscriber
 
     public function getSubscribedEvents()
     {
+        //Events::prePersist -> Events::preFlush -> Events::postPersist -> Events::postFlush
+        //Events::preFlush -> Events::preUpdate -> Events::postUpdate -> Events::postFlush
         return array(
+            Events::prePersist,
+            Events::postPersist,
             Events::preUpdate,
-            Events::postUpdate
+            Events::postUpdate,
+            Events::preFlush,
+            Events::postFlush,
         );
     }
 
-    private $preCategory = [];
-
-    public function preUpdate(LifecycleEventArgs $args)
+    public function prePersist(LifecycleEventArgs $args)
     {
-        $object = $args->getObject();
-        if ($object instanceof CategoryInterface && !$object->isRoot()) {
-            //todo: get preCategory
-            //$category = ...
-            //$this->setPreCategory($category);
-        }
+        
     }
 
-    public function setPreCategory(CategoryInterface $category)
+    public function postPersist(LifecycleEventArgs $args)
     {
-        $this->preCategory = $category;
+        
+    }
+
+    public function preUpdate(PreUpdateEventArgs $args)
+    {
+        $object = $args->getObject();
+        if ($object instanceof CategoryInterface) {
+            if ($args->hasChangedField('parent')) {
+                $this->preCategory['parent'] = $args->getOldValue('parent');
+            }
+            if ($args->hasChangedField('weight')) {
+                $this->preCategory['weight'] = intval($args->getOldValue('weight'));
+            }
+        }
     }
 
     public function postUpdate(LifecycleEventArgs $args)
     {
         $object = $args->getObject();
-        if ($object instanceof CategoryInterface && $this->preCategory && !$object->isRoot()) {
+        if ($object instanceof CategoryInterface && $this->preCategory) {
             $em = $args->getObjectManager();
-            if ($object->getParent()->getId() == $this->preCategory->getParent()->getId()) {
+            if (empty($this->preCategory['parent']) || $object->getParent()->getId() == $this->preCategory['parent']->getId()) {
                 $qb = $em->createQueryBuilder()
                         ->update(get_class($object), 'category');
-                if ($object->getWeight() > $this->preCategory->getWeight()) {
+                if ($object->getWeight() > $this->preCategory['weight']) {
                     $qb->set('category.weight', 'category.weight - 1')
                             ->where('category.id != :id and category.parent = :parent and category.weight >= :min and category.weight <= :max')
                             ->setParameter('id', $object->getId())
                             ->setParameter('parent', $object->getParent())
-                            ->setParameter('min', $this->preCategory->getWeight() + 1)
+                            ->setParameter('min', $this->preCategory['weight'] + 1)
                             ->setParameter('max', $object->getWeight())
                     ;
                     $qb->getQuery()->execute();
-                } elseif ($object->getWeight() < $this->preCategory->getWeight()) {
+                } elseif ($object->getWeight() < $this->preCategory['weight']) {
                     $qb->set('category.weight', 'category.weight + 1')
                             ->where('category.id != :id and category.parent = :parent and category.weight >= :min and category.weight <= :max')
                             ->setParameter('id', $object->getId())
                             ->setParameter('parent', $object->getParent())
                             ->setParameter('min', $object->getWeight())
-                            ->setParameter('max', $this->preCategory->getWeight() - 1)
+                            ->setParameter('max', $this->preCategory['weight'] - 1)
                     ;
                     $qb->getQuery()->execute();
                 }
-            } else {
+            } elseif ($object->getParent()->getId() != $this->preCategory['parent']->getId()) {
                 //pre
                 $qb = $em->createQueryBuilder()
                         ->update(get_class($object), 'category')
                         ->set('category.weight', 'category.weight - 1')
                         ->where('category.id != :id and category.parent = :parent and category.weight > :weight')
                         ->setParameter('id', $object->getId())
-                        ->setParameter('parent', $this->preCategory->getParent())
-                        ->setParameter('weight', $this->preCategory->getWeight())
+                        ->setParameter('parent', $this->preCategory['parent'])
+                        ->setParameter('weight', $this->preCategory['weight'])
                 ;
                 $qb->getQuery()->execute();
                 //new
@@ -104,7 +121,18 @@ class CategoryWeightListener implements EventSubscriber
                 ;
                 $qb->getQuery()->execute();
             }
+            $this->preCategory = [];
         }
+    }
+
+    public function preFlush(PreFlushEventArgs $args)
+    {
+        
+    }
+
+    public function postFlush(PostFlushEventArgs $args)
+    {
+        
     }
 
 }

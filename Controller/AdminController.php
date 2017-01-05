@@ -129,7 +129,6 @@ class AdminController extends Controller
                 break;
             case 'move':
                 $category = $this->getCategoryOrThrow($request->get('id'));
-                $preCategory = clone $category;
                 $parentId = $request->request->get('parent_id');
                 if ($parentId != $category->getParent()->getId()) {
                     $parent = $this->getCategoryOrThrow($parentId);
@@ -138,10 +137,6 @@ class AdminController extends Controller
                 $weight = $request->request->get('weight');
                 $category->setWeight($weight);
                 $manager->updateCategory($category);
-                $listener = new CategoryWeightListener();
-                $listener->setPreCategory($preCategory);
-                $args = new LifecycleEventArgs($category,  $this->getDoctrine()->getManager());
-                $listener->postUpdate($args);
                 break;
             case 'delete':
                 $this->deleteAction($request);

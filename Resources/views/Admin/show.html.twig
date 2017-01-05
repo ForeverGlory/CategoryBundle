@@ -1,10 +1,10 @@
 {% extends "GloryCategoryBundle::layout.html.twig" %}
 
 {% block stylesheets %}
-    <link href="{{asset("assets/components/jstree/dist/themes/default/style.min.css")}}" rel="stylesheet"/>
+    <link href="{{asset("components/jstree/dist/themes/default/style.min.css")}}" rel="stylesheet"/>
 {% endblock %}
 {% block javascripts %}
-    <script type="text/javascript" src="{{asset("assets/components/jstree/dist/jstree.min.js")}}"></script>
+    <script type="text/javascript" src="{{asset("components/jstree/dist/jstree.min.js")}}"></script>
     <script type="text/javascript">
         jQuery(function ($) {
             $('#category-tree').jstree({

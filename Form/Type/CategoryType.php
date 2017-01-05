@@ -24,13 +24,13 @@ class CategoryType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        
+        $builder->add('name');
     }
 
-    public function getParent()
-    {
-        return 'entity';
-    }
+//    public function getParent()
+//    {
+//        return 'entity';
+//    }
 
     public function getName()
     {

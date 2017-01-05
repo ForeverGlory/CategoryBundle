@@ -19,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
  * 
  * @ORM\Entity
  * @ORM\Table("category")
- * @ORM\MappedSuperclass
+ * 
  * @author ForeverGlory <foreverglory@qq.com>
  */
 class Category extends BaseCategory

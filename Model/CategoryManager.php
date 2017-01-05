@@ -86,7 +86,6 @@ class CategoryManager
     public function findCategories(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
         $repository = $this->getDoctrine()->getRepository($this->getClass());
-        $orderBy = $orderBy? : ['weigth' => 'ASC'];
         return $repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 

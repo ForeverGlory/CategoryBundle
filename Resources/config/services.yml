@@ -1,18 +1,18 @@
 services:
     glory_category.category_manager:
         class: Glory\Bundle\CategoryBundle\Model\CategoryManager
-        arguments: [@service_container]
+        arguments: ['@service_container']
         
     glory_category.form.category:
         class: Glory\Bundle\CategoryBundle\Form\Type\CategoryFormType
-        arguments: [@glory_category.category_manager]
+        arguments: ['@glory_category.category_manager']
         tags: 
             - { name: form.type, alias: glory_category_form }
     
     glory_category.form.category_type:
         class: Glory\Bundle\CategoryBundle\Form\Type\CategoryType
         tags: 
-            - { name: form.type, alias: category }
+            - { name: form.type }
 
     glory_category.event.weight_listener:
         class: Glory\Bundle\CategoryBundle\EventListener\CategoryWeightListener
